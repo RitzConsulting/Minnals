@@ -58,6 +58,13 @@
 
         .ball{position:absolute;width:14px;height:14px;background:radial-gradient(circle at 30% 30%,white,#ddd);border-radius:50%;transform:translate(-50%,-50%);z-index:15;box-shadow:2px 2px 4px rgba(0,0,0,.4);transition:all .4s;opacity:0;}
         .ball.visible{opacity:1;}
+        .pass-label{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:20;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:bold;text-align:center;opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap;max-width:90%;letter-spacing:.5px;}
+        .pass-label.visible{opacity:1;}
+        .pass-label.ubt{background:linear-gradient(135deg,rgba(255,213,79,.9),rgba(255,152,0,.9));color:#333;}
+        .pass-label.tl{background:linear-gradient(135deg,rgba(33,150,243,.9),rgba(21,101,192,.9));color:white;}
+        .pass-label.pb{background:linear-gradient(135deg,rgba(76,175,80,.9),rgba(46,125,50,.9));color:white;}
+        .pass-label.sw{background:linear-gradient(135deg,rgba(156,39,176,.9),rgba(106,27,154,.9));color:white;}
+        .pass-label.ov{background:linear-gradient(135deg,rgba(244,67,54,.9),rgba(198,40,40,.9));color:white;}
         .psl{position:absolute;height:3px;background:linear-gradient(90deg,#ffd54f,#ffeb3b);transform-origin:left center;z-index:5;opacity:0;border-radius:2px;box-shadow:0 0 8px #ffd54f;}
         .psl.active{animation:pa .6s ease-out forwards;}
         @keyframes pa{0%{opacity:0;width:0}50%{opacity:1}100%{opacity:0;width:100%}}
@@ -165,7 +172,7 @@
         <div class="controls-row">
             <button class="btn btn-d active" onclick="setDef()">🛡️ Def</button>
             <button class="btn btn-a" onclick="setAtt()">⚔️ Att</button>
-            <button class="btn btn-p" onclick="showPass()">📍 Pass</button>
+            <button class="btn btn-p" id="passBtn" onclick="cyclePass()">📍 Pass ▶</button>
             <button class="btn btn-s" onclick="showSub()">🔄 Rotate</button>
             <span class="mbadge md" id="mi">DEFENSIVE</span>
         </div>
@@ -174,6 +181,7 @@
                 <div class="cl"></div><div class="cc"></div><div class="cd"></div>
                 <div class="pal"></div><div class="par"></div><div class="gl"></div><div class="gr"></div>
                 <div class="ball" id="ball"></div><div id="pls"></div>
+                <div class="pass-label" id="passLabel"></div>
                 <div class="player" id="gk" style="left:8%;top:50%" onclick="sg('gk')"><div class="ch">?</div><div class="pc gk"><span class="pn">Gerry</span><span class="pp">GK</span></div><span class="ps">↔ Sijo</span></div>
                 <div class="player hidden" id="cb" style="left:16%;top:50%" onclick="sg('cb')"><div class="ch">?</div><div class="pc def"><span class="pn">Abi</span><span class="pp">CB</span></div><span class="ps">↔ Shailu/Girish</span></div>
                 <div class="player" id="lb" style="left:20%;top:25%" onclick="sg('lb')"><div class="ch">?</div><div class="pc def"><span class="pn">Unni</span><span class="pp">LB</span></div><span class="ps">↔ Aravind</span></div>
@@ -350,8 +358,241 @@ function cm(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('
 // ===== POSITIONS =====
 const P0={d:{gk:{left:'8%',top:'50%'},cb:{left:'16%',top:'50%'},lb:{left:'20%',top:'25%'},rb:{left:'20%',top:'75%'},cdm:{left:'32%',top:'50%'},lm:{left:'48%',top:'22%'},rm:{left:'48%',top:'78%'},cm:{left:'58%',top:'50%'},st:{left:'78%',top:'50%'}},a:{gk:{left:'8%',top:'50%'},cb:{left:'20%',top:'50%'},lb:{left:'30%',top:'20%'},rb:{left:'30%',top:'80%'},cdm:{left:'45%',top:'50%'},lm:{left:'65%',top:'15%'},rm:{left:'65%',top:'85%'},cm:{left:'72%',top:'50%'},st:{left:'88%',top:'50%'}}};
 const P1={d:{gk:{left:'8%',top:'50%'},cb:{left:'16%',top:'50%'},lb:{left:'24%',top:'25%'},rb:{left:'24%',top:'75%'},cdm:{left:'36%',top:'50%'},lm:{left:'50%',top:'22%'},rm:{left:'50%',top:'78%'},cm:{left:'60%',top:'50%'},st:{left:'78%',top:'50%'}},a:{gk:{left:'8%',top:'50%'},cb:{left:'18%',top:'50%'},lb:{left:'32%',top:'20%'},rb:{left:'32%',top:'80%'},cdm:{left:'48%',top:'50%'},lm:{left:'68%',top:'15%'},rm:{left:'68%',top:'85%'},cm:{left:'72%',top:'50%'},st:{left:'88%',top:'50%'}}};
-const S0=[{f:'gk',t:'lb'},{f:'lb',t:'cdm'},{f:'cdm',t:'rm'},{f:'rm',t:'cm'},{f:'cm',t:'lm'},{f:'lm',t:'st'},{f:'st',t:'cm'},{f:'cm',t:'cdm'}];
-const S1=[{f:'gk',t:'cb'},{f:'cb',t:'lb'},{f:'lb',t:'cdm'},{f:'cdm',t:'rm'},{f:'rm',t:'cm'},{f:'cm',t:'lm'},{f:'lm',t:'st'},{f:'st',t:'cm'},{f:'cm',t:'cb'}];
+// ===== TACTICAL PASSING PATTERNS =====
+// Each pattern: name, css class, description, steps (for each formation)
+// Step types: 'pass' = ball moves, 'move' = player moves (off-ball run), 'label' = show text
+const PATTERNS = {
+wa: [ // 2-1-3-1 patterns
+    { name:'⬆️ Up-Back-Through (Left)', cls:'ubt', desc:'Build from back: UP to CDM, BACK to LB, THROUGH to LM → ST',
+      steps:[
+        {type:'label',text:'UP-BACK-THROUGH (Left)'},
+        {type:'pass',f:'gk',t:'lb',spd:300},
+        {type:'pass',f:'lb',t:'cdm',spd:300,label:'UP ⬆️'},
+        {type:'move',id:'lb',to:{left:'28%',top:'22%'},spd:500},
+        {type:'pass',f:'cdm',t:'lb',spd:300,label:'BACK ⬇️'},
+        {type:'move',id:'lm',to:{left:'58%',top:'18%'},spd:400},
+        {type:'pass',f:'lb',t:'lm',spd:350,label:'THROUGH ➡️'},
+        {type:'move',id:'st',to:{left:'82%',top:'40%'},spd:400},
+        {type:'pass',f:'lm',t:'st',spd:300,label:'FINISH 🎯'},
+    ]},
+    { name:'⬆️ Up-Back-Through (Right)', cls:'ubt', desc:'Build from back: UP to CDM, BACK to RB, THROUGH to RM → ST',
+      steps:[
+        {type:'label',text:'UP-BACK-THROUGH (Right)'},
+        {type:'pass',f:'gk',t:'rb',spd:300},
+        {type:'pass',f:'rb',t:'cdm',spd:300,label:'UP ⬆️'},
+        {type:'move',id:'rb',to:{left:'28%',top:'72%'},spd:500},
+        {type:'pass',f:'cdm',t:'rb',spd:300,label:'BACK ⬇️'},
+        {type:'move',id:'rm',to:{left:'58%',top:'82%'},spd:400},
+        {type:'pass',f:'rb',t:'rm',spd:350,label:'THROUGH ➡️'},
+        {type:'move',id:'st',to:{left:'82%',top:'60%'},spd:400},
+        {type:'pass',f:'rm',t:'st',spd:300,label:'FINISH 🎯'},
+    ]},
+    { name:'🔀 Through the Lines (Central)', cls:'tl', desc:'Break lines: GK→CDM splits midfield, CDM→CM splits defense, CM→ST',
+      steps:[
+        {type:'label',text:'THROUGH THE LINES (Central)'},
+        {type:'pass',f:'gk',t:'lb',spd:300},
+        {type:'pass',f:'lb',t:'cdm',spd:300,label:'Line 1 broken ✂️'},
+        {type:'move',id:'cm',to:{left:'52%',top:'45%'},spd:400},
+        {type:'pass',f:'cdm',t:'cm',spd:350,label:'Line 2 broken ✂️'},
+        {type:'move',id:'st',to:{left:'72%',top:'42%'},spd:400},
+        {type:'pass',f:'cm',t:'st',spd:300,label:'Line 3 broken ✂️'},
+        {type:'move',id:'lm',to:{left:'68%',top:'20%'},spd:400},
+        {type:'pass',f:'st',t:'lm',spd:300,label:'CROSS/SHOOT 🎯'},
+    ]},
+    { name:'↩️ Pullback & Support', cls:'pb', desc:'Attack, get stopped, pull back to CDM, switch point of attack',
+      steps:[
+        {type:'label',text:'PULLBACK & SUPPORT'},
+        {type:'pass',f:'lb',t:'cdm',spd:300},
+        {type:'pass',f:'cdm',t:'lm',spd:300},
+        {type:'move',id:'lm',to:{left:'55%',top:'25%'},spd:400},
+        {type:'pass',f:'lm',t:'cm',spd:300,label:'Blocked! ✋'},
+        {type:'pass',f:'cm',t:'cdm',spd:350,label:'PULL BACK ↩️'},
+        {type:'move',id:'rm',to:{left:'52%',top:'75%'},spd:400},
+        {type:'pass',f:'cdm',t:'rm',spd:350,label:'SWITCH ↔️'},
+        {type:'move',id:'st',to:{left:'75%',top:'65%'},spd:400},
+        {type:'pass',f:'rm',t:'st',spd:300,label:'GO! 🎯'},
+    ]},
+    { name:'↔️ Switch Play', cls:'sw', desc:'Move ball side to side to stretch opponents, find space',
+      steps:[
+        {type:'label',text:'SWITCH PLAY'},
+        {type:'pass',f:'gk',t:'lb',spd:300},
+        {type:'pass',f:'lb',t:'cdm',spd:300},
+        {type:'move',id:'lm',to:{left:'45%',top:'20%'},spd:400},
+        {type:'pass',f:'cdm',t:'lm',spd:350,label:'Left side'},
+        {type:'pass',f:'lm',t:'cdm',spd:350,label:'No space ✋'},
+        {type:'pass',f:'cdm',t:'rb',spd:350,label:'SWITCH! ↔️'},
+        {type:'move',id:'rm',to:{left:'55%',top:'82%'},spd:400},
+        {type:'pass',f:'rb',t:'rm',spd:350,label:'Space found! ✅'},
+        {type:'move',id:'st',to:{left:'78%',top:'60%'},spd:400},
+        {type:'pass',f:'rm',t:'st',spd:300,label:'CROSS 🎯'},
+    ]},
+    { name:'🏃 Overlap Run', cls:'ov', desc:'Fullback overlaps winger, creates 2v1 on the flank',
+      steps:[
+        {type:'label',text:'OVERLAP RUN'},
+        {type:'pass',f:'cdm',t:'lb',spd:300},
+        {type:'pass',f:'lb',t:'lm',spd:300},
+        {type:'move',id:'lb',to:{left:'42%',top:'12%'},spd:600,label:'LB overlaps! 🏃'},
+        {type:'pass',f:'lm',t:'cm',spd:300},
+        {type:'pass',f:'cm',t:'lb',spd:350,label:'Find overlap ➡️'},
+        {type:'move',id:'st',to:{left:'78%',top:'45%'},spd:400},
+        {type:'move',id:'rm',to:{left:'68%',top:'55%'},spd:400},
+        {type:'pass',f:'lb',t:'st',spd:350,label:'CROSS 🎯'},
+    ]}
+],
+wi: [ // 1-2-3-1 patterns (with Abi at CB)
+    { name:'⬆️ Up-Back-Through (Left)', cls:'ubt', desc:'Build via CB: CB→CDM UP, CDM→LB BACK, LB→LM THROUGH → ST',
+      steps:[
+        {type:'label',text:'UP-BACK-THROUGH (Left)'},
+        {type:'pass',f:'gk',t:'cb',spd:300},
+        {type:'pass',f:'cb',t:'cdm',spd:300,label:'UP ⬆️'},
+        {type:'move',id:'lb',to:{left:'32%',top:'22%'},spd:500},
+        {type:'pass',f:'cdm',t:'lb',spd:300,label:'BACK ⬇️'},
+        {type:'move',id:'lm',to:{left:'60%',top:'18%'},spd:400},
+        {type:'pass',f:'lb',t:'lm',spd:350,label:'THROUGH ➡️'},
+        {type:'move',id:'st',to:{left:'82%',top:'40%'},spd:400},
+        {type:'pass',f:'lm',t:'st',spd:300,label:'FINISH 🎯'},
+    ]},
+    { name:'⬆️ Up-Back-Through (Right)', cls:'ubt', desc:'Build via CB: CB→CDM UP, CDM→RB BACK, RB→RM THROUGH → ST',
+      steps:[
+        {type:'label',text:'UP-BACK-THROUGH (Right)'},
+        {type:'pass',f:'gk',t:'cb',spd:300},
+        {type:'pass',f:'cb',t:'cdm',spd:300,label:'UP ⬆️'},
+        {type:'move',id:'rb',to:{left:'32%',top:'78%'},spd:500},
+        {type:'pass',f:'cdm',t:'rb',spd:300,label:'BACK ⬇️'},
+        {type:'move',id:'rm',to:{left:'60%',top:'82%'},spd:400},
+        {type:'pass',f:'rb',t:'rm',spd:350,label:'THROUGH ➡️'},
+        {type:'move',id:'st',to:{left:'82%',top:'60%'},spd:400},
+        {type:'pass',f:'rm',t:'st',spd:300,label:'FINISH 🎯'},
+    ]},
+    { name:'🔀 Through the Lines (CB Split)', cls:'tl', desc:'CB plays through defensive line, CDM breaks midfield, CM finds ST',
+      steps:[
+        {type:'label',text:'THROUGH THE LINES (CB Split)'},
+        {type:'pass',f:'gk',t:'cb',spd:300},
+        {type:'move',id:'cdm',to:{left:'40%',top:'45%'},spd:400},
+        {type:'pass',f:'cb',t:'cdm',spd:350,label:'Line 1 broken ✂️'},
+        {type:'move',id:'cm',to:{left:'55%',top:'42%'},spd:400},
+        {type:'pass',f:'cdm',t:'cm',spd:350,label:'Line 2 broken ✂️'},
+        {type:'move',id:'st',to:{left:'75%',top:'45%'},spd:400},
+        {type:'pass',f:'cm',t:'st',spd:300,label:'Line 3 broken ✂️'},
+        {type:'move',id:'lm',to:{left:'72%',top:'22%'},spd:400},
+        {type:'pass',f:'st',t:'lm',spd:300,label:'LAY OFF 🎯'},
+    ]},
+    { name:'↩️ Pullback & Recycle', cls:'pb', desc:'Attack stalls, pull back to CB, switch and go again',
+      steps:[
+        {type:'label',text:'PULLBACK & RECYCLE'},
+        {type:'pass',f:'cb',t:'cdm',spd:300},
+        {type:'pass',f:'cdm',t:'lm',spd:300},
+        {type:'move',id:'lm',to:{left:'58%',top:'25%'},spd:400},
+        {type:'pass',f:'lm',t:'cm',spd:300,label:'Blocked! ✋'},
+        {type:'pass',f:'cm',t:'cdm',spd:350,label:'PULL BACK ↩️'},
+        {type:'pass',f:'cdm',t:'cb',spd:300,label:'RECYCLE ♻️'},
+        {type:'move',id:'rm',to:{left:'55%',top:'78%'},spd:400},
+        {type:'pass',f:'cb',t:'rb',spd:300},
+        {type:'pass',f:'rb',t:'rm',spd:350,label:'NEW ANGLE ➡️'},
+        {type:'move',id:'st',to:{left:'78%',top:'62%'},spd:400},
+        {type:'pass',f:'rm',t:'st',spd:300,label:'GO! 🎯'},
+    ]},
+    { name:'↔️ Switch via CB', cls:'sw', desc:'Use CB as pivot to switch play side to side',
+      steps:[
+        {type:'label',text:'SWITCH VIA CB'},
+        {type:'pass',f:'gk',t:'cb',spd:300},
+        {type:'pass',f:'cb',t:'lb',spd:300},
+        {type:'pass',f:'lb',t:'lm',spd:300,label:'Left side'},
+        {type:'pass',f:'lm',t:'cdm',spd:350,label:'No space ✋'},
+        {type:'pass',f:'cdm',t:'cb',spd:350,label:'BACK TO CB ↩️'},
+        {type:'pass',f:'cb',t:'rb',spd:350,label:'SWITCH! ↔️'},
+        {type:'move',id:'rm',to:{left:'58%',top:'82%'},spd:400},
+        {type:'pass',f:'rb',t:'rm',spd:350,label:'Space found! ✅'},
+        {type:'move',id:'st',to:{left:'78%',top:'60%'},spd:400},
+        {type:'pass',f:'rm',t:'st',spd:300,label:'CROSS 🎯'},
+    ]},
+    { name:'🏃 Overlap + Through', cls:'ov', desc:'LB overlaps LM, combines with CM for through ball to ST',
+      steps:[
+        {type:'label',text:'OVERLAP + THROUGH'},
+        {type:'pass',f:'cb',t:'cdm',spd:300},
+        {type:'pass',f:'cdm',t:'lm',spd:300},
+        {type:'move',id:'lb',to:{left:'48%',top:'12%'},spd:600,label:'LB overlaps! 🏃'},
+        {type:'pass',f:'lm',t:'cm',spd:300},
+        {type:'pass',f:'cm',t:'lb',spd:350,label:'Find overlap ➡️'},
+        {type:'move',id:'st',to:{left:'78%',top:'42%'},spd:400},
+        {type:'move',id:'rm',to:{left:'70%',top:'55%'},spd:400},
+        {type:'pass',f:'lb',t:'st',spd:350,label:'CROSS 🎯'},
+    ]}
+]};
+
+let curPattern=0, passRunning=false;
+// Save original positions to restore after animation
+function savePositions(){
+    const saved={};
+    document.querySelectorAll('.player').forEach(p=>{saved[p.id]={left:p.style.left,top:p.style.top};});
+    return saved;
+}
+function restorePositions(saved){
+    Object.keys(saved).forEach(id=>{const p=document.getElementById(id);if(p){p.style.left=saved[id].left;p.style.top=saved[id].top;}});
+}
+
+async function cyclePass(){
+    if(passRunning)return;
+    passRunning=true;
+    const btn=document.getElementById('passBtn');
+    const pats=PATTERNS[cF];
+    const pat=pats[curPattern];
+    btn.textContent=`📍 ${pat.name}`;
+    btn.classList.add('active');
+    const saved=savePositions();
+    const b=document.getElementById('ball');
+    const c=document.getElementById('pls');
+    const lbl=document.getElementById('passLabel');
+    c.innerHTML='';
+    b.classList.add('visible');
+    // Show pattern label
+    lbl.className='pass-label '+pat.cls+' visible';
+    lbl.textContent=pat.name;
+    for(let i=0;i<pat.steps.length;i++){
+        const step=pat.steps[i];
+        if(step.type==='label'){
+            lbl.textContent=step.text;
+        } else if(step.type==='pass'){
+            const fp=document.getElementById(step.f),tp=document.getElementById(step.t);
+            if(!fp||!tp||fp.classList.contains('hidden')||tp.classList.contains('hidden'))continue;
+            if(step.label)lbl.textContent=step.label;
+            // Move ball
+            b.style.left=fp.style.left;b.style.top=fp.style.top;
+            await sl(120);
+            // Draw pass line
+            const from=gC(step.f),to=gC(step.t);
+            const l=document.createElement('div');l.className='psl';
+            l.style.left=`${from.x}px`;l.style.top=`${from.y}px`;
+            const dx=to.x-from.x,dy=to.y-from.y;
+            l.style.width=`${Math.sqrt(dx*dx+dy*dy)}px`;
+            l.style.transform=`rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;
+            c.appendChild(l);l.classList.add('active');
+            b.style.left=tp.style.left;b.style.top=tp.style.top;
+            await sl(step.spd||350);
+        } else if(step.type==='move'){
+            // Off-ball player movement
+            const p=document.getElementById(step.id);
+            if(p&&!p.classList.contains('hidden')){
+                if(step.label)lbl.textContent=step.label;
+                p.style.left=step.to.left;p.style.top=step.to.top;
+            }
+            await sl(step.spd||400);
+        }
+    }
+    // Hold final position
+    await sl(1200);
+    // Cleanup
+    b.classList.remove('visible');
+    lbl.classList.remove('visible');
+    c.innerHTML='';
+    // Restore all player positions
+    restorePositions(saved);
+    // Advance to next pattern
+    curPattern=(curPattern+1)%pats.length;
+    btn.textContent=`📍 Pass ▶ (${curPattern+1}/${pats.length})`;
+    btn.classList.remove('active');
+    passRunning=false;
+}
 const R0=[
     {gk:{n:'Gerry',s:'Sijo'},lb:{n:'Unni',s:'Aravind'},rb:{n:'Girish',s:'Shailesh'},cdm:{n:'Arun',s:'Ritz'},lm:{n:'Rithun',s:'Jai'},rm:{n:'Sijo',s:'Biju'},cm:{n:'Sajas',s:'Biju'},st:{n:'Jai',s:'PK'}},
     {gk:{n:'Gerry',s:'Sijo'},lb:{n:'Aravind',s:'Unni'},rb:{n:'Shailesh',s:'Girish'},cdm:{n:'Ritz',s:'Arun'},lm:{n:'Rithun',s:'Jai'},rm:{n:'Biju',s:'Sijo'},cm:{n:'Sajas',s:'Biju'},st:{n:'Jai',s:'PK'}},
@@ -365,7 +606,6 @@ const R1=[
     {gk:{n:'Gerry',s:'Sijo'},cb:{n:'Abi',s:'Shailu/Girish'},lb:{n:'Unni',s:'Aravind'},rb:{n:'Girish',s:'Shailesh'},cdm:{n:'Arun',s:'Ritz'},lm:{n:'Rithun',s:'Jai'},rm:{n:'Aju',s:'Sijo'},cm:{n:'Biju',s:'Sajas'},st:{n:'Manu',s:'PK'}}
 ];
 
-function setFormation(f){cF=f;cR=0;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));document.querySelector(`.fbtn.${f}`).classList.add('active');if(f==='wa')document.getElementById('cb').classList.add('hidden');else document.getElementById('cb').classList.remove('hidden');uN((f==='wa'?R0:R1)[0]);cM==='defensive'?setDef():setAtt();}
 function uN(r){Object.keys(r).forEach(id=>{const p=document.getElementById(id);if(p){p.querySelector('.pn').textContent=r[id].n;p.querySelector('.ps').textContent=`↔ ${r[id].s}`;}});}
 function gP(){return cF==='wa'?P0:P1;}
 function setDef(){cM='defensive';mv(gP().d);document.getElementById('mi').textContent='DEFENSIVE';document.getElementById('mi').className='mbadge md';uB('d');}
@@ -374,10 +614,12 @@ function mv(c){Object.keys(c).forEach(id=>{const p=document.getElementById(id);i
 function uB(m){document.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));document.querySelector(m==='d'?'.btn-d':'.btn-a').classList.add('active');}
 function gC(id){const p=document.getElementById(id),f=document.querySelector('.fi'),r=f.getBoundingClientRect();return{x:(parseFloat(p.style.left)/100)*r.width,y:(parseFloat(p.style.top)/100)*r.height};}
 
-async function showPass(){const b=document.getElementById('ball'),c=document.getElementById('pls');c.innerHTML='';const s=cF==='wa'?S0:S1;b.classList.add('visible');for(let i=0;i<s.length;i++){const pass=s[i],fp=document.getElementById(pass.f),tp=document.getElementById(pass.t);if(fp.classList.contains('hidden')||tp.classList.contains('hidden'))continue;const from=gC(pass.f),to=gC(pass.t);b.style.left=fp.style.left;b.style.top=fp.style.top;await sl(250);const l=document.createElement('div');l.className='psl';l.style.left=`${from.x}px`;l.style.top=`${from.y}px`;const dx=to.x-from.x,dy=to.y-from.y;l.style.width=`${Math.sqrt(dx*dx+dy*dy)}px`;l.style.transform=`rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;c.appendChild(l);l.classList.add('active');b.style.left=tp.style.left;b.style.top=tp.style.top;await sl(400);}await sl(400);b.classList.remove('visible');c.innerHTML='';}
 function showSub(){const r=cF==='wa'?R0:R1;cR=(cR+1)%r.length;const rot=r[cR];Object.keys(rot).forEach(id=>{const p=document.getElementById(id);if(!p||p.classList.contains('hidden'))return;p.classList.add('so');setTimeout(()=>{p.querySelector('.pn').textContent=rot[id].n;p.querySelector('.ps').textContent=`↔ ${rot[id].s}`;p.classList.remove('so');p.classList.add('si');setTimeout(()=>p.classList.remove('si'),400);},400);});const nm=cF==='wa'?['Primary','Rotation A','Rotation B','Rot C (Manu/Aju)']:['Abi CB','Shailu CB','Girish CB','Rot C (Manu/Aju)'];document.getElementById('mi').textContent=nm[cR];}
 function sl(ms){return new Promise(r=>setTimeout(r,ms));}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')cm();});
+
+// Reset pattern counter when switching formation
+function setFormation(f){cF=f;cR=0;curPattern=0;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));document.querySelector(`.fbtn.${f}`).classList.add('active');if(f==='wa')document.getElementById('cb').classList.add('hidden');else document.getElementById('cb').classList.remove('hidden');uN((f==='wa'?R0:R1)[0]);cM==='defensive'?setDef():setAtt();document.getElementById('passBtn').textContent='📍 Pass ▶';}
 
 initFB();if(!fbReady)loadLocal();setFormation('wa');setDef();
 </script>
