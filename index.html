@@ -8,12 +8,10 @@
         *{margin:0;padding:0;box-sizing:border-box;}
         html{height:100%;overflow:hidden;}
         body{font-family:'Segoe UI',Arial,sans-serif;background:#1a1a2e;color:white;height:100%;overflow:hidden;display:flex;flex-direction:column;}
-
         .main-layout{display:flex;flex:1;overflow:hidden;width:100%;height:100%;}
 
         /* FIELD PANEL */
         .field-panel{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden;}
-
         .top-bar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:6px 8px;background:rgba(0,0,0,.2);flex-shrink:0;}
         .top-bar h1{font-size:1.3rem;}
         .formation-toggle{display:flex;gap:5px;}
@@ -21,7 +19,6 @@
         .formation-btn.without-abi{background:linear-gradient(135deg,#2196F3,#1565c0);color:white;}
         .formation-btn.with-abi{background:linear-gradient(135deg,#9C27B0,#6a1b9a);color:white;}
         .formation-btn.active{box-shadow:0 0 12px currentColor;transform:scale(1.05);}
-
         .controls-row{display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;padding:4px 8px;background:rgba(0,0,0,.15);flex-shrink:0;}
         .btn{padding:5px 12px;border:none;border-radius:14px;font-size:10px;font-weight:bold;cursor:pointer;transition:all .3s;text-transform:uppercase;}
         .btn-defensive{background:linear-gradient(135deg,#2196F3,#1565c0);color:white;}
@@ -34,7 +31,7 @@
         .mode-defensive{background:#2196F3;}
         .mode-attack{background:#F44336;}
 
-        /* FIELD - takes all remaining space */
+        /* FIELD */
         .field-area{flex:1;position:relative;overflow:hidden;min-height:0;}
         .field-container{position:absolute;inset:4px;background:#2d5a27;border-radius:8px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.4);}
         .field{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#2d5a27 0px,#2d5a27 10%,#3d6a37 10%,#3d6a37 20%);border:3px solid white;}
@@ -66,56 +63,78 @@
         .pass-line{position:absolute;height:3px;background:linear-gradient(90deg,#ffd54f,#ffeb3b);transform-origin:left center;z-index:5;opacity:0;border-radius:2px;box-shadow:0 0 8px #ffd54f;}
         .pass-line.active{animation:passAnim .6s ease-out forwards;}
         @keyframes passAnim{0%{opacity:0;width:0}50%{opacity:1}100%{opacity:0;width:100%}}
-
         .player.subbing-out{animation:subOut .4s ease-in forwards;}
         .player.subbing-in{animation:subIn .4s ease-out forwards;}
         @keyframes subOut{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-100%) scale(.5)}}
         @keyframes subIn{0%{opacity:0;transform:translate(-50%,0%) scale(.5)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 
-        /* Squad strip */
         .squad-strip{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;padding:4px 6px;font-size:9px;background:rgba(0,0,0,.2);flex-shrink:0;}
         .squad-strip span{padding:2px 6px;border-radius:8px;}
         .sq-gk{background:rgba(67,160,71,.3);}.sq-def{background:rgba(30,136,229,.3);}.sq-mid{background:rgba(255,152,0,.3);}.sq-fwd{background:rgba(229,57,53,.3);}.sq-opt{background:rgba(158,158,158,.2);color:#9e9e9e;font-style:italic;}
 
-        /* CHAT PANEL */
-        .chat-panel{width:260px;background:rgba(255,255,255,.03);border-left:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;height:100%;flex-shrink:0;}
-        .chat-header{padding:8px;background:rgba(255,255,255,.06);font-weight:bold;font-size:12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
-        .chat-name-input{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:4px;align-items:center;flex-shrink:0;}
-        .chat-name-input label{font-size:10px;opacity:.6;}
-        .chat-name-input input{flex:1;padding:4px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:white;font-size:10px;outline:none;}
-        .chat-messages{flex:1;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:5px;min-height:0;}
-        .chat-msg{padding:6px 9px;border-radius:8px;font-size:11px;line-height:1.35;max-width:94%;}
+        /* CHAT PANEL - BIGGER TEXT */
+        .chat-panel{width:300px;background:rgba(255,255,255,.03);border-left:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;height:100%;flex-shrink:0;}
+        .chat-header{padding:10px;background:rgba(255,255,255,.06);font-weight:bold;font-size:15px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+        .chat-tabs{display:flex;flex-shrink:0;}
+        .chat-tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:bold;cursor:pointer;border-bottom:2px solid transparent;transition:all .3s;background:rgba(255,255,255,.03);}
+        .chat-tab.active{border-bottom-color:#ffd54f;color:#ffd54f;background:rgba(255,215,79,.08);}
+        .chat-tab:hover{background:rgba(255,255,255,.06);}
+        .chat-name-input{padding:8px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:5px;align-items:center;flex-shrink:0;}
+        .chat-name-input label{font-size:13px;opacity:.7;}
+        .chat-name-input input{flex:1;padding:6px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:white;font-size:13px;outline:none;}
+        .chat-messages{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:7px;min-height:0;}
+        .chat-msg{padding:9px 12px;border-radius:10px;font-size:14px;line-height:1.45;max-width:94%;}
         .chat-msg.system{background:rgba(33,150,243,.12);border:1px solid rgba(33,150,243,.15);align-self:flex-start;}
         .chat-msg.user{background:rgba(76,175,80,.12);border:1px solid rgba(76,175,80,.15);align-self:flex-end;}
-        .chat-msg .msg-author{font-weight:bold;font-size:9px;margin-bottom:2px;opacity:.6;}
-        .chat-msg .msg-time{font-size:8px;opacity:.4;text-align:right;margin-top:2px;}
-        .chat-input-area{padding:6px 8px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:4px;flex-shrink:0;}
-        .chat-input-area input{flex:1;padding:6px 10px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:white;font-size:11px;outline:none;}
-        .chat-input-area input::placeholder{color:rgba(255,255,255,.3);}
-        .chat-send{padding:6px 12px;border-radius:16px;border:none;background:#4CAF50;color:white;font-size:11px;cursor:pointer;font-weight:bold;}
+        .chat-msg.ai{background:rgba(156,39,176,.12);border:1px solid rgba(156,39,176,.2);align-self:flex-start;}
+        .chat-msg .msg-author{font-weight:bold;font-size:11px;margin-bottom:3px;opacity:.7;}
+        .chat-msg .msg-time{font-size:10px;opacity:.4;text-align:right;margin-top:3px;}
+        .chat-input-area{padding:8px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:5px;flex-shrink:0;}
+        .chat-input-area input{flex:1;padding:8px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:white;font-size:14px;outline:none;}
+        .chat-input-area input::placeholder{color:rgba(255,255,255,.35);}
+        .chat-send{padding:8px 14px;border-radius:18px;border:none;background:#4CAF50;color:white;font-size:13px;cursor:pointer;font-weight:bold;}
         .chat-send:hover{background:#388E3C;}
-        .chat-loading{text-align:center;padding:10px;font-size:11px;opacity:.5;}
+        .summarize-bar{padding:8px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;display:flex;gap:5px;}
+        .btn-summarize{flex:1;padding:8px;border:none;border-radius:12px;font-size:12px;font-weight:bold;cursor:pointer;transition:all .3s;background:linear-gradient(135deg,#9C27B0,#6a1b9a);color:white;}
+        .btn-summarize:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(156,39,176,.4);}
+        .btn-summarize:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+        /* Summary view */
+        .summary-view{display:none;flex:1;overflow-y:auto;padding:10px;flex-direction:column;gap:8px;}
+        .summary-view.active{display:flex;}
+        .chat-messages.hidden{display:none;}
+        .summary-card{padding:12px;background:rgba(156,39,176,.1);border:1px solid rgba(156,39,176,.2);border-radius:10px;font-size:14px;line-height:1.5;}
+        .summary-card h4{color:#ce93d8;margin-bottom:8px;font-size:15px;}
+        .summary-card p{margin-bottom:8px;}
+        .summary-card ul{margin-left:16px;margin-bottom:8px;}
+        .summary-card li{margin-bottom:4px;}
+        .summary-loading{text-align:center;padding:30px;font-size:14px;opacity:.6;}
 
         /* MODAL */
         .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;justify-content:center;align-items:center;padding:15px;}
         .modal-overlay.active{display:flex;}
-        .modal{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:14px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.15);}
-        .modal-header{padding:14px;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);}
-        .modal-header .player-icon{width:54px;height:54px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px;border:3px solid white;}
-        .modal-header h2{font-size:1.15rem;margin-bottom:3px;}
-        .modal-header .position-badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:bold;}
-        .modal-body{padding:14px;}
-        .guide-section{margin-bottom:10px;}
-        .guide-section h3{font-size:11px;color:#ffd54f;margin-bottom:4px;}
+        .modal{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:14px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.15);}
+        .modal-header{padding:18px;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);}
+        .modal-header .player-icon{width:72px;height:72px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:30px;border:4px solid white;}
+        .modal-header h2{font-size:1.6rem;margin-bottom:4px;}
+        .modal-header .position-badge{display:inline-block;padding:5px 16px;border-radius:12px;font-size:14px;font-weight:bold;}
+        .modal-body{padding:18px;}
+        .guide-section{margin-bottom:14px;}
+        .guide-section h3{font-size:16px;color:#ffd54f;margin-bottom:8px;}
         .guide-section ul{list-style:none;padding:0;}
-        .guide-section li{padding:5px 8px;background:rgba(255,255,255,.04);border-radius:5px;margin-bottom:3px;font-size:11px;line-height:1.35;border-left:3px solid;}
+        .guide-section li{padding:9px 12px;background:rgba(255,255,255,.04);border-radius:6px;margin-bottom:5px;font-size:15px;line-height:1.45;border-left:4px solid;}
         .guide-section li.must-do{border-color:#4CAF50;}.guide-section li.must-not{border-color:#F44336;}.guide-section li.tip{border-color:#2196F3;}
-        .modal-close{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:none;color:white;width:28px;height:28px;border-radius:50%;font-size:15px;cursor:pointer;}
-        .swap-info{text-align:center;padding:6px;background:rgba(255,215,0,.08);border-radius:6px;margin-top:8px;font-size:10px;color:#ffd54f;}
+        .modal-close{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.1);border:none;color:white;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;}
+        .swap-info{text-align:center;padding:10px;background:rgba(255,215,0,.08);border-radius:8px;margin-top:12px;font-size:14px;color:#ffd54f;}
+
+        /* DB Setup Banner */
+        .db-banner{display:none;padding:8px 12px;background:rgba(255,152,0,.15);border:1px solid rgba(255,152,0,.3);border-radius:8px;margin:6px 8px;font-size:11px;line-height:1.4;flex-shrink:0;}
+        .db-banner.show{display:block;}
+        .db-banner a{color:#ffd54f;}
 
         @media(max-width:700px){
             .main-layout{flex-direction:column;}
-            .chat-panel{width:100%;height:200px;border-left:none;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+            .chat-panel{width:100%;height:220px;border-left:none;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
             .field-panel{flex:1;min-height:0;}
             .player{width:56px;height:56px;}
             .player-name{font-size:10px;}.player-pos{font-size:8px;}.player-swap{font-size:7px;bottom:-13px;}
@@ -140,21 +159,14 @@
             <button class="btn btn-sub" onclick="showSubstitution()">🔄 Rotate</button>
             <span class="mode-badge mode-defensive" id="modeIndicator">DEFENSIVE</span>
         </div>
-
         <div class="field-area">
             <div class="field-container">
                 <div class="field">
                     <div class="field-inner">
-                        <div class="center-line"></div>
-                        <div class="center-circle"></div>
-                        <div class="center-dot"></div>
-                        <div class="penalty-area-left"></div>
-                        <div class="penalty-area-right"></div>
-                        <div class="goal-left"></div>
-                        <div class="goal-right"></div>
-                        <div class="ball" id="ball"></div>
-                        <div id="passLines"></div>
-
+                        <div class="center-line"></div><div class="center-circle"></div><div class="center-dot"></div>
+                        <div class="penalty-area-left"></div><div class="penalty-area-right"></div>
+                        <div class="goal-left"></div><div class="goal-right"></div>
+                        <div class="ball" id="ball"></div><div id="passLines"></div>
                         <div class="player" id="gk" style="left:8%;top:50%" onclick="showPlayerGuide('gk')"><div class="click-hint">?</div><div class="player-circle gk"><span class="player-name">Gerry</span><span class="player-pos">GK</span></div><span class="player-swap">↔ Sijo</span></div>
                         <div class="player hidden" id="cb" style="left:16%;top:50%" onclick="showPlayerGuide('cb')"><div class="click-hint">?</div><div class="player-circle def"><span class="player-name">Abi</span><span class="player-pos">CB</span></div><span class="player-swap">↔ Shailu/Girish</span></div>
                         <div class="player" id="lb" style="left:20%;top:25%" onclick="showPlayerGuide('lb')"><div class="click-hint">?</div><div class="player-circle def"><span class="player-name">Unni</span><span class="player-pos">LB</span></div><span class="player-swap">↔ Aravind</span></div>
@@ -168,7 +180,6 @@
                 </div>
             </div>
         </div>
-
         <div class="squad-strip">
             <span class="sq-gk">Gerry</span><span class="sq-gk">Sijo*</span>
             <span class="sq-def">Abi</span><span class="sq-def">Unni</span><span class="sq-def">Girish</span><span class="sq-def">Shailesh</span><span class="sq-def">Aravind</span>
@@ -178,10 +189,20 @@
         </div>
     </div>
 
+    <!-- CHAT PANEL -->
     <div class="chat-panel">
         <div class="chat-header">💬 Team Feedback</div>
+        <div class="chat-tabs">
+            <div class="chat-tab active" id="tabChat" onclick="switchTab('chat')">💬 Chat</div>
+            <div class="chat-tab" id="tabSummary" onclick="switchTab('summary')">🤖 AI Summary</div>
+        </div>
         <div class="chat-name-input"><label>Name:</label><input type="text" id="chatName" placeholder="Your name"></div>
+        <div class="db-banner" id="dbBanner">⚠️ Chat storage not connected. Messages work in this session. To persist across visits, <a href="#" onclick="showSetupGuide();return false;">setup Firebase</a></div>
         <div class="chat-messages" id="chatMessages"></div>
+        <div class="summary-view" id="summaryView"></div>
+        <div class="summarize-bar">
+            <button class="btn-summarize" id="btnSummarize" onclick="summarizeFeedback()">🤖 Summarize & Suggest</button>
+        </div>
         <div class="chat-input-area">
             <input type="text" id="chatInput" placeholder="Type feedback..." onkeydown="if(event.key==='Enter')sendChat()">
             <button class="chat-send" onclick="sendChat()">Send</button>
@@ -189,6 +210,7 @@
     </div>
 </div>
 
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
     <div class="modal" onclick="event.stopPropagation()">
         <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -197,11 +219,82 @@
     </div>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
 let currentFormation='without-abi',currentMode='defensive',currentRotation=0;
+let firebaseReady = false;
+let db = null;
+let allMessages = [];
 
-// ===== PERSISTENT CHAT STORAGE =====
-const CHAT_KEY = 'minnals-team-chat';
+// ===== FIREBASE CONFIG =====
+// INSTRUCTIONS: Create a free Firebase project and replace this config
+// 1. Go to https://console.firebase.google.com
+// 2. Click "Create a project" → name it "minnals"
+// 3. Go to "Build" → "Realtime Database" → "Create Database"
+// 4. Choose location, then select "Start in TEST mode"
+// 5. Go to Project Settings (gear icon) → scroll to "Your apps" → click web icon (</>)
+// 6. Register app, copy the firebaseConfig object and paste below
+const firebaseConfig = {
+    // PASTE YOUR FIREBASE CONFIG HERE:
+    // apiKey: "your-api-key",
+    // authDomain: "your-project.firebaseapp.com",
+    // databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+    // projectId: "your-project",
+    // storageBucket: "your-project.appspot.com",
+    // messagingSenderId: "123456",
+    // appId: "your-app-id"
+};
+
+function initFirebase() {
+    try {
+        if (firebaseConfig.apiKey) {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            firebaseReady = true;
+            listenForMessages();
+            document.getElementById('dbBanner').classList.remove('show');
+        } else {
+            document.getElementById('dbBanner').classList.add('show');
+        }
+    } catch(e) {
+        console.error('Firebase init failed:', e);
+        document.getElementById('dbBanner').classList.add('show');
+    }
+}
+
+function listenForMessages() {
+    if (!firebaseReady) return;
+    db.ref('chat/messages').orderByChild('timestamp').on('value', (snapshot) => {
+        allMessages = [];
+        const container = document.getElementById('chatMessages');
+        container.innerHTML = '';
+        // Pinned first
+        PINNED_MSGS.forEach(m => container.appendChild(makeMsgEl(m.author, m.text, m.time, m.type)));
+        // DB messages
+        snapshot.forEach(child => {
+            const m = child.val();
+            allMessages.push(m);
+            container.appendChild(makeMsgEl(m.author, m.text, m.time, 'user'));
+        });
+        scrollChat();
+    });
+}
+
+async function saveToFirebase(author, text, time) {
+    if (!firebaseReady) return;
+    try {
+        await db.ref('chat/messages').push({
+            author, text, time, timestamp: Date.now()
+        });
+    } catch(e) {
+        console.error('Save failed:', e);
+    }
+}
+
+// ===== CHAT =====
 const PINNED_MSGS = [
     {author:'Ritz',text:'Welcome! Share feedback on formations & positions. Click any player for their role guide.',time:'Pinned',type:'system'},
     {author:'Ritz',text:'🛡️ Priority: DEFENSIVE & PASS-ORIENTED. Stay compact, simple passes, defend as a unit.',time:'Pinned',type:'system'},
@@ -209,91 +302,14 @@ const PINNED_MSGS = [
     {author:'Ritz',text:'⚠️ FITNESS: 8:45 PM sharp. Work on fitness daily 💪',time:'Pinned',type:'system'}
 ];
 
-let storageAvailable = false;
-let localMessages = []; // fallback in-memory store
+let localMessages = [];
 
-async function checkStorage() {
-    try {
-        if (window.storage && typeof window.storage.get === 'function') {
-            storageAvailable = true;
-        }
-    } catch(e) {
-        storageAvailable = false;
-    }
-}
-
-async function loadChat() {
+function loadLocalChat() {
     const container = document.getElementById('chatMessages');
     container.innerHTML = '';
-
-    // Always render pinned first
-    PINNED_MSGS.forEach(m => {
-        container.appendChild(makeMsgEl(m.author, m.text, m.time, m.type));
-    });
-
-    // Try shared storage first, then personal, then in-memory
-    let msgs = [];
-    if (storageAvailable) {
-        try {
-            const result = await window.storage.get(CHAT_KEY, true);
-            msgs = JSON.parse(result.value);
-        } catch(e1) {
-            try {
-                const result = await window.storage.get(CHAT_KEY, false);
-                msgs = JSON.parse(result.value);
-            } catch(e2) {
-                msgs = localMessages;
-            }
-        }
-    } else {
-        msgs = localMessages;
-    }
-
-    if (Array.isArray(msgs)) {
-        msgs.forEach(m => {
-            container.appendChild(makeMsgEl(m.author, m.text, m.time, 'user'));
-        });
-    }
+    PINNED_MSGS.forEach(m => container.appendChild(makeMsgEl(m.author, m.text, m.time, m.type)));
+    localMessages.forEach(m => container.appendChild(makeMsgEl(m.author, m.text, m.time, 'user')));
     scrollChat();
-}
-
-async function saveChat(author, text, time) {
-    const newMsg = {author, text, time};
-    localMessages.push(newMsg);
-
-    if (!storageAvailable) return;
-
-    let msgs = [];
-    // Try to load existing
-    try {
-        const result = await window.storage.get(CHAT_KEY, true);
-        msgs = JSON.parse(result.value);
-        if (!Array.isArray(msgs)) msgs = [];
-    } catch(e1) {
-        try {
-            const result = await window.storage.get(CHAT_KEY, false);
-            msgs = JSON.parse(result.value);
-            if (!Array.isArray(msgs)) msgs = [];
-        } catch(e2) {
-            msgs = [...localMessages];
-        }
-    }
-
-    if (!msgs.find(m => m.author === newMsg.author && m.text === newMsg.text && m.time === newMsg.time)) {
-        msgs.push(newMsg);
-    }
-    if (msgs.length > 100) msgs = msgs.slice(-100);
-
-    // Try shared first, fallback to personal
-    try {
-        await window.storage.set(CHAT_KEY, JSON.stringify(msgs), true);
-    } catch(e1) {
-        try {
-            await window.storage.set(CHAT_KEY, JSON.stringify(msgs), false);
-        } catch(e2) {
-            // storage unavailable, in-memory only
-        }
-    }
 }
 
 function makeMsgEl(author, text, time, type) {
@@ -315,16 +331,156 @@ async function sendChat() {
     const t = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + ' ' + new Date().toLocaleDateString([], {month:'short',day:'numeric'});
     const text = input.value.trim();
 
-    // Add to UI
-    document.getElementById('chatMessages').appendChild(makeMsgEl(name, text, t, 'user'));
-    scrollChat();
+    if (firebaseReady) {
+        await saveToFirebase(name, text, t);
+    } else {
+        localMessages.push({author: name, text, time: t});
+        allMessages.push({author: name, text, time: t});
+        document.getElementById('chatMessages').appendChild(makeMsgEl(name, text, t, 'user'));
+        scrollChat();
+    }
     input.value = '';
-
-    // Save to persistent shared storage
-    await saveChat(name, text, t);
 }
 
-// Chat refresh handled at init
+// ===== TABS =====
+function switchTab(tab) {
+    document.getElementById('tabChat').classList.toggle('active', tab === 'chat');
+    document.getElementById('tabSummary').classList.toggle('active', tab === 'summary');
+    document.getElementById('chatMessages').classList.toggle('hidden', tab !== 'chat');
+    document.getElementById('summaryView').classList.toggle('active', tab === 'summary');
+}
+
+// ===== AI SUMMARIZE =====
+async function summarizeFeedback() {
+    const btn = document.getElementById('btnSummarize');
+    btn.disabled = true;
+    btn.textContent = '⏳ Analyzing...';
+    switchTab('summary');
+
+    const msgs = allMessages.map(m => `${m.author}: ${m.text}`).join('\n');
+    const summaryView = document.getElementById('summaryView');
+
+    if (allMessages.length === 0) {
+        summaryView.innerHTML = '<div class="summary-card"><h4>No feedback yet</h4><p>Ask the team to share their thoughts in the chat, then click summarize!</p></div>';
+        btn.disabled = false;
+        btn.textContent = '🤖 Summarize & Suggest';
+        return;
+    }
+
+    // Try Claude API
+    try {
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 1000,
+                messages: [{
+                    role: "user",
+                    content: `You are the tactical analyst for Minnals 8v8 football team. Analyze the team feedback and provide:
+
+1. **SUMMARY**: Key points from all feedback (what players like, dislike, concerns)
+2. **POSITION SUGGESTIONS**: Based on feedback, any position swaps or adjustments worth considering
+3. **TACTICAL ALTERNATIVES**: 1-2 alternative approaches that address the feedback while keeping defensive priority
+4. **ACTION ITEMS**: Quick wins the coach can implement
+
+Keep it concise, practical, and in a supportive coaching tone.
+
+Current formations: 2-1-3-1 (without Abi) and 1-2-3-1 (with Abi at CB)
+Primary lineup: GK-Gerry, LB-Unni, RB-Girish, CDM-Arun, LM-Rithun, RM-Sijo, CM-Sajas, ST-Jai
+CB (when used): Abi
+
+Team feedback messages:
+${msgs}`
+                }]
+            })
+        });
+
+        const data = await response.json();
+        const text = data.content.map(i => i.text || '').join('');
+        
+        // Convert markdown-style to HTML
+        const html = text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n- /g, '\n<li>')
+            .replace(/\n(\d+)\. /g, '\n<li>')
+            .replace(/\n/g, '<br>');
+
+        summaryView.innerHTML = `<div class="summary-card">${html}</div>`;
+    } catch(e) {
+        // Fallback: local summary
+        const authors = [...new Set(allMessages.map(m => m.author))];
+        const topics = {};
+        allMessages.forEach(m => {
+            if (!topics[m.author]) topics[m.author] = [];
+            topics[m.author].push(m.text);
+        });
+
+        let html = `<div class="summary-card">
+            <h4>📋 Feedback Summary</h4>
+            <p><strong>${allMessages.length} messages</strong> from <strong>${authors.length} players</strong></p><br>`;
+        
+        authors.forEach(a => {
+            html += `<p><strong>${a}:</strong></p><ul>`;
+            topics[a].forEach(t => html += `<li>${t}</li>`);
+            html += `</ul>`;
+        });
+
+        html += `<br><h4>💡 Quick Analysis</h4>
+            <p>Review the feedback above and consider:</p>
+            <ul>
+            <li>Are multiple players requesting position changes?</li>
+            <li>Is there consensus on formation preference (2-1-3-1 vs 1-2-3-1)?</li>
+            <li>Any fitness or availability concerns raised?</li>
+            <li>Do rotation preferences align with the current plan?</li>
+            </ul></div>`;
+        
+        summaryView.innerHTML = html;
+    }
+
+    btn.disabled = false;
+    btn.textContent = '🤖 Summarize & Suggest';
+}
+
+function showSetupGuide() {
+    document.getElementById('modalHeader').innerHTML = `<div class="player-icon" style="background:#ff9800">🔥</div><h2>Setup Firebase (Free)</h2><span class="position-badge" style="background:#ff9800">5 minutes</span>`;
+    document.getElementById('modalBody').innerHTML = `
+        <div class="guide-section">
+            <h3>Step 1: Create Firebase Project</h3>
+            <ul>
+                <li class="tip">Go to <strong>console.firebase.google.com</strong></li>
+                <li class="tip">Click <strong>"Create a project"</strong> → name it <strong>"minnals"</strong></li>
+                <li class="tip">Skip Google Analytics → click <strong>Create</strong></li>
+            </ul>
+        </div>
+        <div class="guide-section">
+            <h3>Step 2: Create Database</h3>
+            <ul>
+                <li class="tip">In left sidebar: <strong>Build → Realtime Database</strong></li>
+                <li class="tip">Click <strong>"Create Database"</strong></li>
+                <li class="tip">Choose any location → select <strong>"Start in test mode"</strong></li>
+            </ul>
+        </div>
+        <div class="guide-section">
+            <h3>Step 3: Get Config</h3>
+            <ul>
+                <li class="tip">Click <strong>gear icon → Project Settings</strong></li>
+                <li class="tip">Scroll down → <strong>"Your apps"</strong> → click <strong>web icon (&lt;/&gt;)</strong></li>
+                <li class="tip">Register app name: <strong>"minnals-web"</strong></li>
+                <li class="tip">Copy the <strong>firebaseConfig</strong> object</li>
+            </ul>
+        </div>
+        <div class="guide-section">
+            <h3>Step 4: Paste in Code</h3>
+            <ul>
+                <li class="tip">Open <strong>index.html</strong> in a text editor</li>
+                <li class="tip">Find <strong>"PASTE YOUR FIREBASE CONFIG HERE"</strong></li>
+                <li class="tip">Replace the empty config with your values</li>
+                <li class="tip">Upload updated file to GitHub → done! 🎉</li>
+            </ul>
+        </div>`;
+    document.getElementById('modalOverlay').classList.add('active');
+}
 
 // ===== PLAYER GUIDES =====
 const playerGuides={
@@ -339,19 +495,14 @@ const playerGuides={
     st:{name:'Striker',icon:'⚽',color:'#e53935',primary:'Jai',swap:'PK',mustDo:['Run into gaps behind defenders','Take shots - be confident','Press defenders - you start our defense!','Hold up ball, wait for support','Be the target for through passes'],mustNot:["Don't drop too deep","Don't stop moving","Don't chase lost causes - press smart"],tips:['When pressing, cut passing lanes','Make life miserable for their defenders','Celebrate every goal! 🎉']}
 };
 
-// ===== POSITIONS & ROTATIONS =====
-const P0={
-    defensive:{gk:{left:'8%',top:'50%'},cb:{left:'16%',top:'50%'},lb:{left:'20%',top:'25%'},rb:{left:'20%',top:'75%'},cdm:{left:'32%',top:'50%'},lm:{left:'48%',top:'22%'},rm:{left:'48%',top:'78%'},cm:{left:'58%',top:'50%'},st:{left:'78%',top:'50%'}},
-    attack:{gk:{left:'8%',top:'50%'},cb:{left:'20%',top:'50%'},lb:{left:'30%',top:'20%'},rb:{left:'30%',top:'80%'},cdm:{left:'45%',top:'50%'},lm:{left:'65%',top:'15%'},rm:{left:'65%',top:'85%'},cm:{left:'72%',top:'50%'},st:{left:'88%',top:'50%'}}
-};
-const P1={
-    defensive:{gk:{left:'8%',top:'50%'},cb:{left:'16%',top:'50%'},lb:{left:'24%',top:'25%'},rb:{left:'24%',top:'75%'},cdm:{left:'36%',top:'50%'},lm:{left:'50%',top:'22%'},rm:{left:'50%',top:'78%'},cm:{left:'60%',top:'50%'},st:{left:'78%',top:'50%'}},
-    attack:{gk:{left:'8%',top:'50%'},cb:{left:'18%',top:'50%'},lb:{left:'32%',top:'20%'},rb:{left:'32%',top:'80%'},cdm:{left:'48%',top:'50%'},lm:{left:'68%',top:'15%'},rm:{left:'68%',top:'85%'},cm:{left:'72%',top:'50%'},st:{left:'88%',top:'50%'}}
-};
+function showPlayerGuide(pos){const g=playerGuides[pos];if(!g)return;document.getElementById('modalHeader').innerHTML=`<div class="player-icon" style="background:${g.color}">${g.icon}</div><h2>${g.name}</h2><span class="position-badge" style="background:${g.color}">${pos.toUpperCase()}</span>`;document.getElementById('modalBody').innerHTML=`<div class="guide-section"><h3>✅ MUST DO</h3><ul>${g.mustDo.map(i=>`<li class="must-do">✅ ${i}</li>`).join('')}</ul></div><div class="guide-section"><h3>❌ MUST NOT</h3><ul>${g.mustNot.map(i=>`<li class="must-not">❌ ${i}</li>`).join('')}</ul></div><div class="guide-section"><h3>💡 TIPS</h3><ul>${g.tips.map(i=>`<li class="tip">💡 ${i}</li>`).join('')}</ul></div><div class="swap-info"><strong>Primary:</strong> ${g.primary} | <strong>Swap:</strong> ${g.swap}</div>`;document.getElementById('modalOverlay').classList.add('active');}
+function closeModal(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('modalOverlay').classList.remove('active');}
 
+// ===== POSITIONS & ROTATIONS =====
+const P0={defensive:{gk:{left:'8%',top:'50%'},cb:{left:'16%',top:'50%'},lb:{left:'20%',top:'25%'},rb:{left:'20%',top:'75%'},cdm:{left:'32%',top:'50%'},lm:{left:'48%',top:'22%'},rm:{left:'48%',top:'78%'},cm:{left:'58%',top:'50%'},st:{left:'78%',top:'50%'}},attack:{gk:{left:'8%',top:'50%'},cb:{left:'20%',top:'50%'},lb:{left:'30%',top:'20%'},rb:{left:'30%',top:'80%'},cdm:{left:'45%',top:'50%'},lm:{left:'65%',top:'15%'},rm:{left:'65%',top:'85%'},cm:{left:'72%',top:'50%'},st:{left:'88%',top:'50%'}}};
+const P1={defensive:{gk:{left:'8%',top:'50%'},cb:{left:'16%',top:'50%'},lb:{left:'24%',top:'25%'},rb:{left:'24%',top:'75%'},cdm:{left:'36%',top:'50%'},lm:{left:'50%',top:'22%'},rm:{left:'50%',top:'78%'},cm:{left:'60%',top:'50%'},st:{left:'78%',top:'50%'}},attack:{gk:{left:'8%',top:'50%'},cb:{left:'18%',top:'50%'},lb:{left:'32%',top:'20%'},rb:{left:'32%',top:'80%'},cdm:{left:'48%',top:'50%'},lm:{left:'68%',top:'15%'},rm:{left:'68%',top:'85%'},cm:{left:'72%',top:'50%'},st:{left:'88%',top:'50%'}}};
 const PS0=[{from:'gk',to:'lb'},{from:'lb',to:'cdm'},{from:'cdm',to:'rm'},{from:'rm',to:'cm'},{from:'cm',to:'lm'},{from:'lm',to:'st'},{from:'st',to:'cm'},{from:'cm',to:'cdm'}];
 const PS1=[{from:'gk',to:'cb'},{from:'cb',to:'lb'},{from:'lb',to:'cdm'},{from:'cdm',to:'rm'},{from:'rm',to:'cm'},{from:'cm',to:'lm'},{from:'lm',to:'st'},{from:'st',to:'cm'},{from:'cm',to:'cb'}];
-
 const R0=[
     {gk:{name:'Gerry',swap:'Sijo'},lb:{name:'Unni',swap:'Aravind'},rb:{name:'Girish',swap:'Shailesh'},cdm:{name:'Arun',swap:'Ritz'},lm:{name:'Rithun',swap:'Jai'},rm:{name:'Sijo',swap:'Biju'},cm:{name:'Sajas',swap:'Biju'},st:{name:'Jai',swap:'PK'}},
     {gk:{name:'Gerry',swap:'Sijo'},lb:{name:'Aravind',swap:'Unni'},rb:{name:'Shailesh',swap:'Girish'},cdm:{name:'Ritz',swap:'Arun'},lm:{name:'Rithun',swap:'Jai'},rm:{name:'Biju',swap:'Sijo'},cm:{name:'Sajas',swap:'Biju'},st:{name:'Jai',swap:'PK'}},
@@ -365,10 +516,6 @@ const R1=[
     {gk:{name:'Gerry',swap:'Sijo'},cb:{name:'Abi',swap:'Shailu/Girish'},lb:{name:'Unni',swap:'Aravind'},rb:{name:'Girish',swap:'Shailesh'},cdm:{name:'Arun',swap:'Ritz'},lm:{name:'Rithun',swap:'Jai'},rm:{name:'Aju',swap:'Sijo'},cm:{name:'Biju',swap:'Sajas'},st:{name:'Manu',swap:'PK'}}
 ];
 
-// ===== FUNCTIONS =====
-function showPlayerGuide(pos){const g=playerGuides[pos];if(!g)return;document.getElementById('modalHeader').innerHTML=`<div class="player-icon" style="background:${g.color}">${g.icon}</div><h2>${g.name}</h2><span class="position-badge" style="background:${g.color}">${pos.toUpperCase()}</span>`;document.getElementById('modalBody').innerHTML=`<div class="guide-section"><h3>✅ MUST DO</h3><ul>${g.mustDo.map(i=>`<li class="must-do">✅ ${i}</li>`).join('')}</ul></div><div class="guide-section"><h3>❌ MUST NOT</h3><ul>${g.mustNot.map(i=>`<li class="must-not">❌ ${i}</li>`).join('')}</ul></div><div class="guide-section"><h3>💡 TIPS</h3><ul>${g.tips.map(i=>`<li class="tip">💡 ${i}</li>`).join('')}</ul></div><div class="swap-info"><strong>Primary:</strong> ${g.primary} | <strong>Swap:</strong> ${g.swap}</div>`;document.getElementById('modalOverlay').classList.add('active');}
-function closeModal(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('modalOverlay').classList.remove('active');}
-
 function setFormation(f){currentFormation=f;currentRotation=0;document.querySelectorAll('.formation-btn').forEach(b=>b.classList.remove('active'));document.querySelector(`.formation-btn.${f}`).classList.add('active');if(f==='without-abi')document.getElementById('cb').classList.add('hidden');else document.getElementById('cb').classList.remove('hidden');updateNames((f==='without-abi'?R0:R1)[0]);currentMode==='defensive'?setDefensiveMode():setAttackMode();}
 function updateNames(r){Object.keys(r).forEach(id=>{const p=document.getElementById(id);if(p){p.querySelector('.player-name').textContent=r[id].name;p.querySelector('.player-swap').textContent=`↔ ${r[id].swap}`;}});}
 function getPos(){return currentFormation==='without-abi'?P0:P1;}
@@ -379,21 +526,15 @@ function upBtn(m){document.querySelectorAll('.btn').forEach(b=>b.classList.remov
 function getCenter(id){const p=document.getElementById(id),f=document.querySelector('.field-inner'),r=f.getBoundingClientRect();return{x:(parseFloat(p.style.left)/100)*r.width,y:(parseFloat(p.style.top)/100)*r.height};}
 
 async function showPassingPattern(){const b=document.getElementById('ball'),c=document.getElementById('passLines');c.innerHTML='';const s=currentFormation==='without-abi'?PS0:PS1;b.classList.add('visible');for(let i=0;i<s.length;i++){const pass=s[i],fp=document.getElementById(pass.from),tp=document.getElementById(pass.to);if(fp.classList.contains('hidden')||tp.classList.contains('hidden'))continue;const from=getCenter(pass.from),to=getCenter(pass.to);b.style.left=fp.style.left;b.style.top=fp.style.top;await sl(250);const line=document.createElement('div');line.className='pass-line';line.style.left=`${from.x}px`;line.style.top=`${from.y}px`;const dx=to.x-from.x,dy=to.y-from.y;line.style.width=`${Math.sqrt(dx*dx+dy*dy)}px`;line.style.transform=`rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;c.appendChild(line);line.classList.add('active');b.style.left=tp.style.left;b.style.top=tp.style.top;await sl(400);}await sl(400);b.classList.remove('visible');c.innerHTML='';}
-
 function showSubstitution(){const r=currentFormation==='without-abi'?R0:R1;currentRotation=(currentRotation+1)%r.length;const rot=r[currentRotation];Object.keys(rot).forEach(id=>{const p=document.getElementById(id);if(!p||p.classList.contains('hidden'))return;p.classList.add('subbing-out');setTimeout(()=>{p.querySelector('.player-name').textContent=rot[id].name;p.querySelector('.player-swap').textContent=`↔ ${rot[id].swap}`;p.classList.remove('subbing-out');p.classList.add('subbing-in');setTimeout(()=>p.classList.remove('subbing-in'),400);},400);});const n=currentFormation==='without-abi'?['Primary','Rotation A','Rotation B','Rot C (Manu/Aju)']:['Abi CB','Shailu CB','Girish CB','Rot C (Manu/Aju)'];document.getElementById('modeIndicator').textContent=n[currentRotation];}
-
 function sl(ms){return new Promise(r=>setTimeout(r,ms));}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
-// Init
-checkStorage().then(() => {
-    setFormation('without-abi');
-    setDefensiveMode();
-    loadChat();
-});
-
-// Auto-refresh only if storage is available
-setInterval(() => { if(storageAvailable) loadChat(); }, 8000);
+// INIT
+initFirebase();
+if (!firebaseReady) loadLocalChat();
+setFormation('without-abi');
+setDefensiveMode();
 </script>
 </body>
 </html>
