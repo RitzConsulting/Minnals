@@ -8,6 +8,25 @@
         *{margin:0;padding:0;box-sizing:border-box;}
         html{height:100%;overflow:hidden;}
         body{font-family:'Segoe UI',Arial,sans-serif;background:#1a1a2e;color:white;height:100%;overflow:hidden;}
+        
+        /* LOGIN PROTECTION SCREEN */
+        .login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
+        .login-screen.hidden{display:none;}
+        .login-box{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);border-radius:20px;padding:40px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+        .login-logo{font-size:4rem;margin-bottom:10px;}
+        .login-title{font-size:1.8rem;font-weight:bold;margin-bottom:5px;background:linear-gradient(135deg,#ffd54f,#ff9800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        .login-subtitle{font-size:.9rem;opacity:.6;margin-bottom:30px;}
+        .login-question{font-size:1.1rem;margin-bottom:20px;line-height:1.5;color:#ffd54f;}
+        .login-input{width:100%;padding:14px 20px;border-radius:30px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:white;font-size:1.1rem;text-align:center;outline:none;transition:all .3s;}
+        .login-input:focus{border-color:#ffd54f;background:rgba(255,215,79,.1);}
+        .login-input::placeholder{color:rgba(255,255,255,.3);}
+        .login-btn{width:100%;padding:14px;border:none;border-radius:30px;background:linear-gradient(135deg,#4CAF50,#2e7d32);color:white;font-size:1.1rem;font-weight:bold;cursor:pointer;margin-top:15px;transition:all .3s;}
+        .login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(76,175,80,.4);}
+        .login-error{color:#ff6b6b;font-size:.9rem;margin-top:15px;opacity:0;transition:opacity .3s;}
+        .login-error.show{opacity:1;}
+        .login-hint{font-size:.8rem;opacity:.4;margin-top:20px;}
+        .login-attempts{font-size:.75rem;opacity:.3;margin-top:10px;}
+        
         .main-layout{display:flex;height:100%;overflow:hidden;}
 
         /* FIELD */
@@ -160,7 +179,22 @@
     </style>
 </head>
 <body>
-<div class="main-layout">
+<!-- LOGIN PROTECTION SCREEN -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <div class="login-logo">⚽</div>
+        <div class="login-title">MINNALS</div>
+        <div class="login-subtitle">Team Tactical Hub</div>
+        <div class="login-question">🤔 Trivia Question:<br><strong>What is Shailu's nickname?</strong></div>
+        <input type="text" class="login-input" id="loginAnswer" placeholder="Enter answer..." autocomplete="off" onkeydown="if(event.key==='Enter')checkAnswer()">
+        <button class="login-btn" onclick="checkAnswer()">🔓 Enter</button>
+        <div class="login-error" id="loginError">❌ Wrong answer! Try again.</div>
+        <div class="login-hint">💡 Hint: Ask a teammate if you don't know!</div>
+        <div class="login-attempts" id="loginAttempts"></div>
+    </div>
+</div>
+
+<div class="main-layout" id="mainContent" style="display:none;">
     <div class="field-panel">
         <div class="top-bar">
             <h1>⚽ MINNALS</h1>
@@ -248,6 +282,78 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
+// ===== LOGIN PROTECTION =====
+// SHA-256 hash of "cona" (lowercase) - the answer is case-insensitive
+const ANSWER_HASH = '3a81933856f4d0b4f7e33da494dce73d0368252c4e1cda53f9ccce3e26bc0e5c';
+let loginAttempts = 0;
+
+// SHA-256 hash function
+async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Check if already authenticated (stored in sessionStorage)
+function checkAuth() {
+    if (sessionStorage.getItem('minnals_auth') === 'true') {
+        unlockPage();
+    }
+}
+
+// Verify answer
+async function checkAnswer() {
+    const input = document.getElementById('loginAnswer');
+    const answer = input.value.trim().toLowerCase();
+    const errorEl = document.getElementById('loginError');
+    const attemptsEl = document.getElementById('loginAttempts');
+    
+    if (!answer) {
+        errorEl.textContent = '❌ Please enter an answer!';
+        errorEl.classList.add('show');
+        return;
+    }
+    
+    const hash = await sha256(answer);
+    loginAttempts++;
+    
+    if (hash === ANSWER_HASH) {
+        // Correct! Store auth and unlock
+        sessionStorage.setItem('minnals_auth', 'true');
+        errorEl.classList.remove('show');
+        document.getElementById('loginScreen').style.transition = 'opacity 0.5s';
+        document.getElementById('loginScreen').style.opacity = '0';
+        setTimeout(unlockPage, 500);
+    } else {
+        // Wrong answer
+        errorEl.textContent = '❌ Wrong answer! Try again.';
+        errorEl.classList.add('show');
+        attemptsEl.textContent = `Attempts: ${loginAttempts}`;
+        input.value = '';
+        input.focus();
+        // Shake animation
+        input.style.animation = 'shake 0.5s';
+        setTimeout(() => input.style.animation = '', 500);
+    }
+}
+
+function unlockPage() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainContent').style.display = 'flex';
+    // Initialize the app after unlock
+    initApp();
+}
+
+// Add shake animation
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}';
+document.head.appendChild(shakeStyle);
+
+// Check auth on page load
+document.addEventListener('DOMContentLoaded', checkAuth);
+
+// ===== MAIN APP =====
 let cF='wa',cM='defensive',cR=0,fbReady=false,db=null,allMsgs=[];
 
 // ===== FIREBASE =====
@@ -621,7 +727,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')cm();});
 // Reset pattern counter when switching formation
 function setFormation(f){cF=f;cR=0;curPattern=0;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));document.querySelector(`.fbtn.${f}`).classList.add('active');if(f==='wa')document.getElementById('cb').classList.add('hidden');else document.getElementById('cb').classList.remove('hidden');uN((f==='wa'?R0:R1)[0]);cM==='defensive'?setDef():setAtt();document.getElementById('passBtn').textContent='📍 Pass ▶';}
 
-initFB();if(!fbReady)loadLocal();setFormation('wa');setDef();
+// Initialize app after login
+function initApp(){
+    initFB();
+    if(!fbReady)loadLocal();
+    setFormation('wa');
+    setDef();
+}
 </script>
 </body>
 </html>
